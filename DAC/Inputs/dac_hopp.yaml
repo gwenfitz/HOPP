@@ -3,7 +3,7 @@ site: #!include flatirons_site.yaml
   data:
     lat: 34.1906
     lon: -101.393
-    elev: 1099
+    elev: 980   # meters?? 
     year: 2012
     tz: -6
     site_boundaries:

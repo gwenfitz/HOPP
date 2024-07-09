@@ -4,6 +4,7 @@ from hopp.utilities import load_yaml
 from hopp.simulation.technologies.sites import SiteInfo
 from hopp.simulation import HoppInterface
 import floris.tools.visualization as wakeviz
+from hopp.tools.dispatch.plot_tools import (plot_battery_output, plot_battery_dispatch_error, plot_generation_profile)
 import matplotlib.pyplot as plt
 
 import greenheart.simulation.technologies.dac.direct_air_capture as dac
@@ -78,20 +79,9 @@ def runsimulation(showplots = 'false'):
     hopp_config["technologies"]["wind"]["floris_config"] = floris_config
 
     #run DAC
-    co2, power = dac.driver(wind_speed,8) # 
+    co2, power = dac.driver(wind_speed,200) # 
 
-## WIND SPEED: 8760 list of wind speed at 10m. Could make a 2D array or repeatedly call
-# change wind profile at each module height down from 10 meters using equation
-# have driver take in wind speed series at 10m, convert internally to array of wind speeds at each module height. 
-# give hourly wind time series, get CO2 produced, power required
-# add up for each stack of DAC
-# within driver multiply by theoretical number of DAC modules/units?? Maybe another input to driver
-# return array or pandas data frame of CO2 captured at each height over time series, and return 1D list of CO2 from 
-# that stack for the hour
-# From driver return module CO2 produced (array), stack CO2 (1D list), total DAC farm CO2 produced (stack * number of DAC units)
-
-
-    # # battery requirements
+    ## power requirements
     dac_power_requirements = [x / 1000 for x in power] #[MW]
     hopp_config["site"]["desired_schedule"] = dac_power_requirements
 
@@ -103,24 +93,7 @@ def runsimulation(showplots = 'false'):
     hi.simulate(project_life=20)
 
 
-    if showplots == 'true':
-    # show plot code
-        horizontal_plane = hi.calculate_horizontal_plane(x_resolution=200, y_resolution=100, height= 6.5)
-        fig, ax_list = plt.subplots(1, 1, figsize=(10, 8))
-        wakeviz.visualize_cut_plane(horizontal_plane, ax=ax_list, title= "Horizontal", clevels = 100, max_speed = 8)
-        wakeviz.show_plots()    
-
-
-
-if __name__ == "__main__":
-    runsimulation(showplots= 'true')
-else:
-    runsimulation()
-
-
-
-
-hopp_results = {
+    hopp_results = {
     "hopp_interface": hi,
     "hybrid_plant": hi.system,
     "combined_hybrid_power_production_hopp": \
@@ -128,4 +101,21 @@ hopp_results = {
     "combined_hybrid_curtailment_hopp": hi.system.grid.generation_curtailed,
     "energy_shortfall_hopp": hi.system.grid.missed_load,
     "annual_energies": hi.system.annual_energies,
-}
+    }
+
+    if showplots == 'true':
+    # show plot code
+        horizontal_plane = hi.calculate_horizontal_plane(x_resolution=200, y_resolution=100, height= 6.5)
+        fig, ax_list = plt.subplots(1, 1, figsize=(10, 8))
+        wakeviz.visualize_cut_plane(horizontal_plane, ax=ax_list, title= "Horizontal", clevels = 100, max_speed = 8)
+        wakeviz.show_plots()    
+
+        plot_battery_output(hi.system)
+        plot_generation_profile(hi.system)
+        plot_battery_dispatch_error(hi.system)
+
+
+if __name__ == "__main__":
+    runsimulation(showplots= 'true')
+else:
+    runsimulation()
