@@ -7,7 +7,7 @@ def driver(windspeed, numDACs):
     windspeed = np.array(windspeed)
     windspeeds = windspeed
     # Adding row to numpy array
-    heights = [2.5,3.5,4.5,5.5,6.5,7.5]
+    heights = [3,5,7,9,11,13]
     for _ in heights[0:-1]:
         windspeeds = np.vstack ((windspeeds, windspeed))
 
@@ -17,6 +17,8 @@ def driver(windspeed, numDACs):
         # v = v_ref * (z/z_ref)^0.143
         windspeeds[k,:] = np.multiply(windspeeds[k,:],height_var)
         k = k+1
+
+    windspeeds[windspeeds == 0] = 0.1
 
     # CO2 produced per DAC module (ie. 1 kg sorbent)
     CO2_permodule = CO2_produced(windspeeds)
@@ -32,8 +34,13 @@ def driver(windspeed, numDACs):
     convert = 0.044 / 907.185
     CO2_total = np.multiply(CO2_total,convert)
 
-    # power input required per hour (kWh)
-    power_total = np.multiply(2000, CO2_total)
+    # power input required per hour (kWh) = 0.10479 kWh per desorption per kg sorbent
+    kg_sorbent = np.multiply(numDACs, 24)
+    power_per_hour = np.multiply(0.10479,kg_sorbent)
+
+    print(power_per_hour)
+    power_total = np.multiply(np.ones(np.shape(CO2_total)), power_per_hour)
+
 
     return CO2_total, power_total
 
@@ -41,7 +48,8 @@ def CO2_produced(x):
     # find CO2 uptake by 1 kg sorbent in one hour (specifically 54 minutes but with 6 minute desorption) at a wind speed x.
     # the wind speed x is defined at the midpoint height of the individual DAC module. 
 
-    y = np.multiply(0.1503,np.log(x)) + 0.6377
+    y = np.multiply(4, np.multiply(0.1503,np.log(x)) + 0.6377)
+    
     return y
 
     """""

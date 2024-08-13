@@ -23,7 +23,7 @@ pT: 0
 
 ###
 # Rotor diameter.
-rotor_diameter: 0.3
+rotor_diameter: 0.2
 
 ###
 # Tip speed ratio defined as linear blade tip speed normalized by the incoming wind speed.

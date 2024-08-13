@@ -128,7 +128,7 @@ flow_field:
   ###
   # The wind speeds to include in the simulation.
   wind_speeds:
-  - 9.0
+  - 8.0
 
   ###
   # The wind veer as a constant value for all points in the grid.

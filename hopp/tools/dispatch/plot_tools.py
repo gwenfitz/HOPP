@@ -19,7 +19,7 @@ def plot_battery_output(hybrid: HybridSimulation,
     time = range(start, end)
     time_slice = slice(start, end)
 
-    fig, axs = plt.subplots(5, 1, figsize=(15, 10))
+    fig, axs = plt.subplots(5, 1, figsize=(10, 7))
     p = 0
     control_attr = 'P'
     if not hybrid.dispatch_builder.options.battery_dispatch == 'simple':
@@ -261,7 +261,7 @@ def plot_generation_profile(hybrid: HybridSimulation,
     time = range(start, end)
     time_slice = slice(start, end)
 
-    plt.figure(figsize=(15, 15))
+    plt.figure(figsize=(12, 6))
 
     # First sub-plot (resources)
     gen = [p * power_scale for p in list(hybrid.grid.generation_profile[time_slice])]
@@ -288,6 +288,7 @@ def plot_generation_profile(hybrid: HybridSimulation,
     plt.grid()
     plt.tick_params(which='both', labelsize=font_size)
     plt.ylabel('Power (MW)', fontsize=font_size)
+    plt.xlabel('Time from Start of Year (Hours)', fontsize=font_size)
     plt.title('Generation Resources', fontsize=font_size)
     plt.legend(fontsize=font_size-2, loc='upper left')
 
@@ -319,6 +320,7 @@ def plot_generation_profile(hybrid: HybridSimulation,
     ax2.set_ylabel('State-of-Charge (-)', fontsize=font_size)
     ax2.legend(fontsize=font_size-2, loc='upper right')
     plt.title('Battery Power Flow', fontsize=font_size)
+    plt.xlabel('Time from Start of Year (Hours)', fontsize = font_size)
 
     # Net action
     plt.subplot(3, 1, 3)
@@ -339,7 +341,6 @@ def plot_generation_profile(hybrid: HybridSimulation,
     ax2.plot(time, price, color=price_color, label='Price')
     ax2.set_ylabel('Grid Price ($/kWh)', fontsize=font_size)
     ax2.legend(fontsize=font_size-2, loc='upper right')
-    plt.xlabel('Time (hours)', fontsize=font_size)
     plt.title('Net Generation', fontsize=font_size)
 
 
@@ -373,7 +374,7 @@ def plot_battery_generation(hybrid: HybridSimulation,
     time = range(start, end)
     time_slice = slice(start, end)
 
-    plt.figure(figsize=(15, 10))
+    plt.figure(figsize=(20, 20))
     # Battery action
     plt.subplot(2, 1, 1)
     plt.tick_params(which='both', labelsize=font_size)
@@ -395,6 +396,7 @@ def plot_battery_generation(hybrid: HybridSimulation,
     ax2.set_ylabel('State-of-Charge (-)', fontsize=font_size)
     ax2.legend(fontsize=font_size-2, loc='upper right')
     plt.title('Battery Power Flow', fontsize=font_size)
+    plt.xlabel('Time from Start of Year (Hours)', fontsize=font_size)
 
     # Net action
     plt.subplot(2, 1, 2)
